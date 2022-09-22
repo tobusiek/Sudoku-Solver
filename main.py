@@ -1,9 +1,6 @@
 from board_reader import BoardReader, InputReader, CSVReader
 from board import Board
 
-# import numpy as np
-# board = np.zeros((9, 9))
-
 
 input_readers = {
     '1': InputReader(),
@@ -33,6 +30,7 @@ def main():
     reader = read_board()
     board_input = reader.read()
     board = Board(board_input)
+    print(board)
 
 
 if __name__ == '__main__':
