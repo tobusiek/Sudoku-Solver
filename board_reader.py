@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from os import curdir
 from string import digits
 from csv_opener import CSVSelector
+from board import Cell
 
 
 class BoardReader(ABC):
@@ -11,11 +12,9 @@ class BoardReader(ABC):
         super().__init__()
         self._board = []
 
-    
     def _valid_row_length(self, row: list[int]) -> bool:
         """Checking if row length is equal to 9."""
         return len(row) == 9
-    
 
     def _valid_row_values(self, row: list[str]) -> bool:
         """Checking if values for cells are numbers between [0-9]."""
@@ -24,20 +23,21 @@ class BoardReader(ABC):
                 return False
         return True
 
+    def _parse_board(self) -> list[list[Cell]]:
+        """TODO"""
+        return [[Cell(self._board[i][j]) for j in range(9)] for i in range(9)]
 
     @abstractmethod
     def _parse_row(self, row: str) -> list[int]:
         """Parsing the input from string to list of digits."""
         pass
 
-
     def _set_row(self, row_idx: int, row: list[int]) -> None:
         """Setting board's row of given index."""
         self._board.insert(row_idx, row)
 
-
     @abstractmethod
-    def read(self) -> list[list[int]]:
+    def read(self) -> list[list[Cell]]:
         """Reading the board from input."""
         pass
 
@@ -47,7 +47,6 @@ class InputReader(BoardReader):
 
     def __init__(self) -> None:
         super().__init__()
-
 
     def _parse_row(self, row: str) -> list[int]:
         row = row.strip()
@@ -60,26 +59,25 @@ class InputReader(BoardReader):
         if not self._valid_row_values(row):
             print('Input values must be digits in range [0-9]\n')
             return []
-        
+
         return [int(digit) for digit in row]
 
-
-    def read(self) -> list[list[int]]:
-        msg = '\nEnter rows of given digits. If cell doesn\'t have a digit yet, enter 0.'
+    def read(self) -> list[list[Cell]]:
+        msg = '\nEnter rows of given digits.'
+        msg += 'If cell doesn\'t have a digit yet, enter 0.'
         msg += ' Separate each digit with space.\nEnter rows:'
         print(msg)
-        
+
         for i in range(9):
             row = []
             while not row:
                 msg = f'{i+1}: '
                 row = input(msg)
                 row = self._parse_row(row)
-                
+
             self._set_row(i, row)
 
-        return self._board
-    
+        return self._parse_board()
 
     def __str__(self) -> str:
         return 'console input'
@@ -92,7 +90,6 @@ class CSVReader(BoardReader):
         super().__init__()
         self._filename = None
 
-    
     def _parse_row(self, row: str) -> list[int]:
         row = row.strip()
         separator = row[1]
@@ -107,11 +104,10 @@ class CSVReader(BoardReader):
         if not self._valid_row_values(row):
             print('Input values must be digits in range [0-9]\n')
             raise ValueError('Reformat the file and run program again')
-        
+
         return [int(digit) for digit in row]
 
-    
-    def read(self) -> list[list[int]]:
+    def read(self) -> list[list[Cell]]:
         self._filename = CSVSelector().get_filename()
 
         if self._filename and self._filename != curdir:
@@ -119,9 +115,8 @@ class CSVReader(BoardReader):
                 for i, row in enumerate(csv_file):
                     row = self._parse_row(row)
                     self._set_row(i, row)
-        
-        return self._board
 
+        return self._parse_board()
 
     def __str__(self) -> str:
         return 'CSV file'
@@ -133,15 +128,13 @@ class TestBoardReader(CSVReader):
     def __init__(self) -> None:
         super().__init__()
 
-
-    def read(self) -> list[list[int]]:
+    def read(self) -> list[list[Cell]]:
         with open(f'{curdir}/test.csv') as csv_file:
             for i, row in enumerate(csv_file):
                 row = self._parse_row(row)
                 self._set_row(i, row)
-        
-        return self._board
-    
+
+        return self._parse_board()
 
     def __str__(self) -> str:
         return 'test board'

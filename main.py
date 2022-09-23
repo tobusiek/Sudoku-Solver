@@ -19,12 +19,12 @@ def read_board() -> BoardReader:
     while not reader:
         for k, v in input_readers.items():
             print(f'{k}. from {v}')
-        
+
         reader = input('your answer: ')
         if reader not in input_readers.keys():
             reader = None
             print('Invalid input, please enter number from list above.\n')
-    
+
     return input_readers[reader]
 
 
@@ -36,11 +36,11 @@ def main():
     print(board)
 
     validator = BoardValidator()
-    if not validator.valid_board(board.current_board):
+    if not validator.valid_board(board):
         print('Not a valid board')
         return
-    
-    solver = BasicSolver(board.current_board, validator)
+
+    solver = BasicSolver(board, validator)
 
 
 if __name__ == '__main__':

@@ -12,12 +12,12 @@ class BoardSolver(ABC):
 
     def _update_current_board(self) -> None:
         """Updating the current board with solved one."""
-        self._cur_board._cur_board = self._solving._cur_board
+        self._cur_board._board = self._solving._board
     
 
     def _revert_solving_board(self) -> None:
         """Updating the solving board with current one."""
-        self._solving._cur_board = self._cur_board._cur_board
+        self._solving._board = self._cur_board._board
 
     
     @property
@@ -57,9 +57,9 @@ class BasicSolver(BoardSolver):
         for i in range(len(possible)):
             for j in range(len(possible[i])):
                 if len(possible[i][j]) == 1:
-                    self._solving._cur_board[i][j] = possible[i][j][0]
+                    self._solving._board[i][j] = possible[i][j][0]
 
-                    if not self._validator.valid_board(self._solving._cur_board):
+                    if not self._validator.valid_board(self._solving._board):
                         self._revert_solving_board()
                         continue
 
