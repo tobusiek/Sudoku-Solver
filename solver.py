@@ -43,12 +43,23 @@ class BasicSolver(BoardSolver):
 
     def _input_single_candidates(self, possible: list[list[list[int]]]) -> None:
         """Checks if there are single candidates to input
-        and updates the solving board"""
+        and updates the solving board."""
         for i, row in enumerate(possible):
             for j, col in possible[row]:
                 if len(row[col]) == 1:
                     self._solving_board._current_board[i][j] = row[col[0]]
+    
 
+    def _alone_in_possible_row(self) -> None:
+        """Checks if there are single digits in possible row to input
+        and updates the solving board."""
+        pass
+
+
+    def _alone_in_possible_col(self) -> None:
+        """Checks if there are single digits in possible column to input
+        and updates the solving board."""
+        pass
 
     
     def _get_possible_digits(self) -> list[list[list[int]]]:
