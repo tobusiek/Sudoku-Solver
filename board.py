@@ -28,7 +28,8 @@ class BoardValidator:
     
     def _valid_rows_digits(self) -> bool:
         for i in range(9):
-            row_digits = [digit for digit in self._board[i] if digit != 0]
+            row_digits = [digit for digit in self._board._current_board[i] \
+                if digit != 0]
             if len(row_digits) != len(set(row_digits)):
                 print(f'Some digits are not unique in row {i+1}')
                 return False
@@ -37,7 +38,7 @@ class BoardValidator:
     
 
     def _valid_cols_digits(self) -> bool:
-        boardT = list(map(list, zip(*self._board)))
+        boardT = list(map(list, zip(*self._board._current_board)))
 
         for i in range(9):
             row_digits = [digit for digit in boardT[i] if digit != 0]
@@ -49,6 +50,16 @@ class BoardValidator:
 
     
     def _valid_squares_digits(self) -> bool:
+        boxes = [[self._board._current_board[3*i+k][3*j+l]
+            for k in range(3) for l in range(3)
+            if self._board._current_board[3*i+k][3*j+l] != 0]
+            for i in range(3) for j in range(3)]
+        
+        for i, box in enumerate(boxes):
+            if len(box) != len(set(box)):
+                print(f'Some digits are not unique in box {i+1}')
+                return False
+
         return True
 
     

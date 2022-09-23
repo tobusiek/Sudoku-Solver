@@ -34,12 +34,12 @@ def main():
     board = Board(board_input)
     print(board)
 
-    # validator = BoardValidator(board)
-    # if not validator.valid_board():
-    #     print('Not a valid board')
-    #     return
+    validator = BoardValidator(board)
+    if not validator.valid_board():
+        print('Not a valid board')
+        return
     
-    # print('Board valid')
+    # solver = BoardSolver()
 
 
 if __name__ == '__main__':
