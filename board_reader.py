@@ -125,3 +125,23 @@ class CSVReader(BoardReader):
 
     def __str__(self) -> str:
         return 'CSV file'
+
+
+class TestBoardReader(CSVReader):
+    """Class for board reading test board."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+    def read(self) -> list[list[int]]:
+        with open(f'{curdir}/test.csv') as csv_file:
+            for i, row in enumerate(csv_file):
+                row = self._parse_row(row)
+                self._set_row(i, row)
+        
+        return self._board
+    
+
+    def __str__(self) -> str:
+        return 'test board'

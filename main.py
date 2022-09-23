@@ -1,10 +1,11 @@
-from board_reader import BoardReader, InputReader, CSVReader
-from board import Board
+from board_reader import BoardReader, InputReader, CSVReader, TestBoardReader
+from board import Board, BoardValidator
 
 
 input_readers = {
     '1': InputReader(),
     '2': CSVReader(),
+    '3': TestBoardReader(),
 }
 
 
@@ -29,8 +30,16 @@ def read_board() -> BoardReader:
 def main():
     reader = read_board()
     board_input = reader.read()
+
     board = Board(board_input)
     print(board)
+
+    # validator = BoardValidator(board)
+    # if not validator.valid_board():
+    #     print('Not a valid board')
+    #     return
+    
+    # print('Board valid')
 
 
 if __name__ == '__main__':
