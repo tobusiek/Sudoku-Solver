@@ -66,6 +66,11 @@ class BasicSolver(BoardSolver):
         pass
 
 
+    def _eliminate_possible_digits(self) -> None:
+        """Remove from possible digits that don't fit in the cell
+         - there are better options."""
+
+
     def solve(self) -> None:
         possible = self._get_possible_digits()
         pass
