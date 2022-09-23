@@ -1,21 +1,21 @@
 class Board:
     def __init__(self, board: list[list[int]]) -> None:
-        self._current_board = board
+        self._cur_board = board
     
 
     @property
     def current_board(self) -> list[list[int]]:
-        return self._current_board
+        return self._cur_board
 
 
     def __str__(self) -> str:
-        if not self._current_board:
+        if not self._cur_board:
             raise ValueError('No board presented')
 
         board_str = '\nCurrent board:\n'
         for row in range(9):
             for col in range(9):
-                board_str += str(self._current_board[row][col]) + ' '
+                board_str += str(self._cur_board[row][col]) + ' '
                 if (col+1) % 3 == 0 and col != 8:
                     board_str += '| '
 
