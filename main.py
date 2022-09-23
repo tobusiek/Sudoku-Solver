@@ -1,5 +1,6 @@
 from board_reader import BoardReader, InputReader, CSVReader, TestBoardReader
 from board import Board, BoardValidator
+from solver import BasicSolver
 
 
 input_readers = {
@@ -34,12 +35,12 @@ def main():
     board = Board(board_input)
     print(board)
 
-    validator = BoardValidator(board)
-    if not validator.valid_board():
+    validator = BoardValidator()
+    if not validator.valid_board(board.current_board):
         print('Not a valid board')
         return
     
-    # solver = BoardSolver()
+    solver = BasicSolver(board.current_board, validator)
 
 
 if __name__ == '__main__':

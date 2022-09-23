@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
-from board import Board
+from board import Board, BoardValidator
 
 
 class BoardSolver(ABC):
     """Abstract class for board solvers."""
-    def __init__(self, board: Board) -> None:
+    def __init__(self, board: Board, validator: BoardValidator) -> None:
         self._current_board = board
         self._solving_board = board
+        self._validator = validator
     
 
     def _update_current_board(self) -> None:
@@ -37,8 +38,8 @@ class BoardSolver(ABC):
 class BasicSolver(BoardSolver):
     """Basic solver method for sudoku board."""
     
-    def __init__(self, board: Board) -> None:
-        super().__init__(board)
+    def __init__(self, board: Board, validator: BoardValidator) -> None:
+        super().__init__(board, validator)
     
 
     def _input_single_candidates(self, possible: list[list[list[int]]]) -> None:
@@ -47,7 +48,7 @@ class BasicSolver(BoardSolver):
         for i, row in enumerate(possible):
             for j, col in possible[row]:
                 if len(row[col]) == 1:
-                    self._solving_board._current_board[i][j] = row[col[0]]
+                    self._solving_board._current_board[i][j] = row[col][0]
     
 
     def _alone_in_possible_row(self) -> None:

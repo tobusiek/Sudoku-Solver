@@ -3,6 +3,11 @@ class Board:
         self._current_board = board
     
 
+    @property
+    def current_board(self) -> list[list[int]]:
+        return self._current_board
+
+
     def __str__(self) -> str:
         if not self._current_board:
             raise ValueError('No board presented')
@@ -22,13 +27,9 @@ class Board:
 
 
 class BoardValidator:
-    def __init__(self, board: Board) -> None:
-        self._board = board
-
-    
-    def _valid_rows_digits(self) -> bool:
+    def _valid_rows_digits(self, board: list[list[int]]) -> bool:
         for i in range(9):
-            row_digits = [d for d in self._board._current_board[i] if d != 0]
+            row_digits = [d for d in board[i] if d != 0]
 
             if len(row_digits) != len(set(row_digits)):
                 print(f'Some digits are not unique in row {i+1}')
@@ -37,8 +38,8 @@ class BoardValidator:
         return True
     
 
-    def _valid_cols_digits(self) -> bool:
-        boardT = list(map(list, zip(*self._board._current_board)))
+    def _valid_cols_digits(self, board: list[list[int]]) -> bool:
+        boardT = list(map(list, zip(*board)))
 
         for i in range(9):
             row_digits = [d for d in boardT[i] if d != 0]
@@ -49,10 +50,10 @@ class BoardValidator:
         return True
 
     
-    def _valid_squares_digits(self) -> bool:
-        boxes = [[self._board._current_board[3*i+k][3*j+l]
+    def _valid_squares_digits(self, board: list[list[int]]) -> bool:
+        boxes = [[board[3*i+k][3*j+l]
             for k in range(3) for l in range(3)
-            if self._board._current_board[3*i+k][3*j+l] != 0]
+            if board[3*i+k][3*j+l] != 0]
             for i in range(3) for j in range(3)]
         
         for i, box in enumerate(boxes):
@@ -63,14 +64,14 @@ class BoardValidator:
         return True
 
     
-    def valid_board(self) -> bool:
-        if not self._valid_rows_digits():
+    def valid_board(self, board: list[list[int]]) -> bool:
+        if not self._valid_rows_digits(board):
             return False
         
-        if not self._valid_cols_digits():
+        if not self._valid_cols_digits(board):
             return False
         
-        if not self._valid_squares_digits():
+        if not self._valid_squares_digits(board):
             return False
         
         return True
