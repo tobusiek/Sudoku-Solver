@@ -5,6 +5,11 @@ class Cell:
         self.digit = digit
         self._possible = set()
 
+    @property
+    def possible(self) -> set:
+        """"""
+        return self._possible
+
     def add_possible_digit(self, possible: int) -> None:
         """TODO"""
         self._possible.add(possible)
@@ -35,6 +40,26 @@ class Board:
     def transpose(self) -> list[list[Cell]]:
         """TODO"""
         return list(map(list, zip(*self._board)))
+
+    def get_nth_row_digits(self, n: int) -> set[int]:
+        """TODO"""
+        return {c.digit for c in self.current_board[n] if c.digit != 0}
+
+    def get_nth_col_digits(self, n: int) -> set[int]:
+        """TODO"""
+        return {c.digit for c in self.transpose()[n] if c.digit != 0}
+
+    def get_box_digits(self, row: int, col: int) -> set[int]:
+        """TODO"""
+        start_row = row - row % 3
+        start_col = col - col % 3
+
+        return {
+            self.current_board[i][j].digit
+            for j in range(start_col, start_col + 3)
+            for i in range(start_row, start_row + 3)
+            if self.current_board[i][j].digit != 0
+        }
 
     def __str__(self) -> str:
         """TODO"""
