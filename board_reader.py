@@ -1,6 +1,8 @@
-from abc import ABC, abstractmethod
 from os import curdir
 from string import digits
+
+from abc import ABC, abstractmethod
+
 from csv_opener import CSVSelector
 from board import Cell
 
@@ -79,9 +81,6 @@ class InputReader(BoardReader):
 
         return self._parse_board()
 
-    def __str__(self) -> str:
-        return 'console input'
-
 
 class CSVReader(BoardReader):
     """Class for board reading from csv file."""
@@ -118,9 +117,6 @@ class CSVReader(BoardReader):
 
         return self._parse_board()
 
-    def __str__(self) -> str:
-        return 'CSV file'
-
 
 class TestBoardReader(CSVReader):
     """Class for board reading test board."""
@@ -135,6 +131,3 @@ class TestBoardReader(CSVReader):
                 self._set_row(i, row)
 
         return self._parse_board()
-
-    def __str__(self) -> str:
-        return 'test board'

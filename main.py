@@ -1,13 +1,18 @@
+from time import time
+
 from board_reader import BoardReader, InputReader, CSVReader, TestBoardReader
 from board import Board, BoardValidator
 from solver import BasicSolver
-from time import time
 
 
 input_readers = {
-    '1': InputReader(),
-    '2': CSVReader(),
-    '3': TestBoardReader(),
+    '1': InputReader,
+    '2': CSVReader,
+    '3': TestBoardReader,
+}
+
+solvers = {
+    '1': BasicSolver,
 }
 
 
@@ -19,14 +24,14 @@ def read_board() -> BoardReader:
 
     while not reader:
         for k, v in input_readers.items():
-            print(f'{k}. from {v}')
+            print(f'{k}. from {v.__name__}')
 
         reader = input('your answer: ')
         if reader not in input_readers.keys():
             reader = None
             print('Invalid input, please enter number from list above.\n')
 
-    return input_readers[reader]
+    return input_readers[reader]()
 
 
 def main():
@@ -44,7 +49,7 @@ def main():
     solver = BasicSolver(board, validator)
     start = time()
     solver.solve()
-    print("Board solved in:", time() - start, board)
+    print(f'Board solved in {(time() - start):.2f}s. {board}')
 
 
 if __name__ == '__main__':

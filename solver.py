@@ -21,7 +21,7 @@ class BoardSolver(ABC):
         self._solving._board = copy(self._cur_board._board)
 
     def _solved(self) -> bool:
-        """TODO"""
+        """Checks if board is solved - no zeros in cells."""
         for i in range(len(self._solving.current_board)):
             if not all(c.digit != 0 for c in self._solving.current_board[i]):
                 return False
@@ -58,13 +58,12 @@ class BasicSolver(BoardSolver):
          candidates can be found."""
         inserted = False
 
-        for i in range(len(self._solving.current_board)):
-            for j, cell in enumerate(self._solving.current_board[i]):
+        for row in range(len(self._solving.current_board)):
+            for cell in self._solving.current_board[row]:
                 if cell.digit:
                     continue
 
                 if len(cell.possible) == 1:
-                    # self._solving.get_cell(i, j).digit = cell.possible.pop()  # can it be that way?
                     cell.digit = cell.possible.pop()
 
                     if not self._validator.valid_board(self._solving):
@@ -81,12 +80,12 @@ class BasicSolver(BoardSolver):
         and updates the solving board."""
         inserted = False
 
-        for i in range(len(self._solving.current_board)):
+        for row in range(len(self._solving.current_board)):
             possible_digits_occurances = dict(
                 zip([n + 1 for n in range(9)], [0 for _ in range(9)])
             )
 
-            for cell in self._solving.current_board[i]:
+            for cell in self._solving.current_board[row]:
                 if cell.digit:
                     continue
 
@@ -94,13 +93,12 @@ class BasicSolver(BoardSolver):
                     possible_digits_occurances[possible_digit] += 1
 
             one_occurance = [k for k, v in possible_digits_occurances.items() if v == 1]
-            for j, cell in enumerate(self._solving.current_board[i]):
+            for cell in self._solving.current_board[row]:
                 if cell.digit:
                     continue
 
                 for possible_digit in cell.possible:
                     if possible_digit in one_occurance:
-                        # self._solving.get_cell(i, j).digit = possible_digit
                         cell.digit = possible_digit
 
                         if not self._validator.valid_board(self._solving):
@@ -118,12 +116,12 @@ class BasicSolver(BoardSolver):
         inserted = False
 
         boardT = self._solving.transpose()
-        for i in range(len(boardT)):
+        for row in range(len(boardT)):
             possible_digits_occurances = dict(
                 zip([n + 1 for n in range(9)], [0 for _ in range(9)])
             )
 
-            for cell in boardT[i]:
+            for cell in boardT[row]:
                 if cell.digit:
                     continue
 
@@ -131,13 +129,13 @@ class BasicSolver(BoardSolver):
                     possible_digits_occurances[possible_digit] += 1
 
             one_occurance = [k for k, v in possible_digits_occurances.items() if v == 1]
-            for j, cell in enumerate(boardT[i]):
+            for cell in boardT[row]:
                 if cell.digit:
                     continue
 
                 for possible_digit in cell.possible:
                     if possible_digit in one_occurance:
-                        self._solving.get_cell(i, j).digit = possible_digit
+                        cell.digit = possible_digit
 
                         if not self._validator.valid_board(self._solving):
                             self._revert_solving_board()
@@ -172,6 +170,7 @@ class BasicSolver(BoardSolver):
     def _eliminate_possible_digits(self) -> None:
         """Remove from possible digits that don't fit in the cell
          - there are better options."""
+        # TODO
         pass
 
     def solve(self) -> None:
