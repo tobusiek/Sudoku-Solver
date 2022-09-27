@@ -6,8 +6,8 @@ class Cell:
         self._possible = set()
 
     @property
-    def possible(self) -> set:
-        """"""
+    def possible(self) -> set[int]:
+        """TODO"""
         return self._possible
 
     def add_possible_digit(self, possible: int) -> None:
@@ -36,6 +36,10 @@ class Board:
     def current_board(self) -> list[list[Cell]]:
         """TODO"""
         return self._board
+    
+    def get_cell(self, row: int, col: int) -> Cell:
+        """TODO"""
+        return self._board[row][col]
 
     def transpose(self) -> list[list[Cell]]:
         """TODO"""

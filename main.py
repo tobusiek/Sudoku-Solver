@@ -1,6 +1,7 @@
 from board_reader import BoardReader, InputReader, CSVReader, TestBoardReader
 from board import Board, BoardValidator
 from solver import BasicSolver
+from time import time
 
 
 input_readers = {
@@ -41,6 +42,9 @@ def main():
         return
 
     solver = BasicSolver(board, validator)
+    start = time()
+    solver.solve()
+    print("Board solved in:", time() - start, board)
 
 
 if __name__ == '__main__':

@@ -20,6 +20,13 @@ class BoardSolver(ABC):
         """Updating the solving board with current one."""
         self._solving._board = copy(self._cur_board._board)
 
+    def _solved(self) -> bool:
+        """TODO"""
+        for i in range(len(self._solving.current_board)):
+            if not all(c.digit != 0 for c in self._solving.current_board[i]):
+                return False
+        return True
+
     @property
     def board(self) -> Board:
         """Returns current board."""
@@ -32,7 +39,7 @@ class BoardSolver(ABC):
 
     @abstractmethod
     def solve(self) -> None:
-        """Calls get_possile_digits method and inputs correct digits in cells
+        """Calls calculate_possile_digits method and inputs correct digits in cells
         if board is valid, until the board is solved. After that, it updates
         the current board with solved one."""
         pass
@@ -49,14 +56,18 @@ class BasicSolver(BoardSolver):
          the solving board. If at least one digit was inserted to a cell,
          it returns True, as the board was updated and new single
          candidates can be found."""
-        inserted: bool = False
+        inserted = False
 
-        for i in range(len(self._solving._board)):
-            for j, cell in enumerate(self._solving._board[i]):
+        for i in range(len(self._solving.current_board)):
+            for j, cell in enumerate(self._solving.current_board[i]):
+                if cell.digit:
+                    continue
+
                 if len(cell.possible) == 1:
-                    self._solving._board[i][j] = cell.possible[0]
+                    # self._solving.get_cell(i, j).digit = cell.possible.pop()  # can it be that way?
+                    cell.digit = cell.possible.pop()
 
-                    if not self._validator.valid_board(self._solving._board):
+                    if not self._validator.valid_board(self._solving):
                         self._revert_solving_board()
                         continue
 
@@ -65,35 +76,114 @@ class BasicSolver(BoardSolver):
 
         return inserted
 
-    def _alone_in_possible_row(self) -> None:
-        """Checks if there are single digits in possible row to input
+    def _alone_candidates_in_rows(self) -> bool:
+        """Checks if there are single candidates in row to input
         and updates the solving board."""
-        pass
+        inserted = False
 
-    def _alone_in_possible_col(self) -> None:
-        """Checks if there are single digits in possible column to input
+        for i in range(len(self._solving.current_board)):
+            possible_digits_occurances = dict(
+                zip([n + 1 for n in range(9)], [0 for _ in range(9)])
+            )
+
+            for cell in self._solving.current_board[i]:
+                if cell.digit:
+                    continue
+
+                for possible_digit in cell.possible:
+                    possible_digits_occurances[possible_digit] += 1
+
+            one_occurance = [k for k, v in possible_digits_occurances.items() if v == 1]
+            for j, cell in enumerate(self._solving.current_board[i]):
+                if cell.digit:
+                    continue
+
+                for possible_digit in cell.possible:
+                    if possible_digit in one_occurance:
+                        # self._solving.get_cell(i, j).digit = possible_digit
+                        cell.digit = possible_digit
+
+                        if not self._validator.valid_board(self._solving):
+                            self._revert_solving_board()
+                            continue
+
+                        self._update_current_board()
+                        inserted = True
+
+        return inserted
+
+    def _alone_candidates_in_cols(self) -> bool:
+        """Checks if there are single candidates in column to input
         and updates the solving board."""
-        pass
+        inserted = False
+
+        boardT = self._solving.transpose()
+        for i in range(len(boardT)):
+            possible_digits_occurances = dict(
+                zip([n + 1 for n in range(9)], [0 for _ in range(9)])
+            )
+
+            for cell in boardT[i]:
+                if cell.digit:
+                    continue
+
+                for possible_digit in cell.possible:
+                    possible_digits_occurances[possible_digit] += 1
+
+            one_occurance = [k for k, v in possible_digits_occurances.items() if v == 1]
+            for j, cell in enumerate(boardT[i]):
+                if cell.digit:
+                    continue
+
+                for possible_digit in cell.possible:
+                    if possible_digit in one_occurance:
+                        self._solving.get_cell(i, j).digit = possible_digit
+
+                        if not self._validator.valid_board(self._solving):
+                            self._revert_solving_board()
+                            continue
+
+                        self._update_current_board()
+                        inserted = True
+
+        return inserted
 
     def _calculate_possible_digits(self) -> None:
         """Calculates possible digits for each empty cell."""
-        for i in range(len(self._solving._board)):
-            for j, cell in self._solving._board[i]:
+        for i in range(len(self._solving.current_board)):
+            for j, cell in enumerate(self._solving.current_board[i]):
                 if cell.digit:
                     continue
 
                 row_digits = self._solving.get_nth_row_digits(i)
                 col_digits = self._solving.get_nth_col_digits(j)
                 box_digits = self._solving.get_box_digits(i, j)
-                possible = set(list(digits)[1:]) - row_digits - col_digits - box_digits
+                possible = (
+                    {int(d) for d in list(digits[1:])}
+                    - row_digits
+                    - col_digits
+                    - box_digits
+                )
 
-                self._solving._board[i][j].set_possible_digits(possible)
+                # self._solving.get_cell(i, j).set_possible_digits(possible)
+                cell.set_possible_digits(possible)
                 self._update_current_board()
 
     def _eliminate_possible_digits(self) -> None:
         """Remove from possible digits that don't fit in the cell
          - there are better options."""
+        pass
 
     def solve(self) -> None:
-        self._calculate_possible_digits()
-        pass
+        while not self._solved():
+            self._calculate_possible_digits()
+            # self._eliminate_possible_digits()
+
+            if self._search_single_candidates():
+                continue
+
+            if self._alone_candidates_in_rows():
+                continue
+
+            if self._alone_candidates_in_cols():
+                continue
