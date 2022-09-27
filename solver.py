@@ -162,8 +162,6 @@ class BasicSolver(BoardSolver):
                     - col_digits
                     - box_digits
                 )
-
-                # self._solving.get_cell(i, j).set_possible_digits(possible)
                 cell.set_possible_digits(possible)
                 self._update_current_board()
 

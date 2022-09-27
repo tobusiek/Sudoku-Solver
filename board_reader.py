@@ -65,7 +65,7 @@ class InputReader(BoardReader):
         return [int(digit) for digit in row]
 
     def read(self) -> list[list[Cell]]:
-        msg = '\nEnter rows of given digits.'
+        msg = '\nEnter rows of given digits. '
         msg += 'If cell doesn\'t have a digit yet, enter 0.'
         msg += ' Separate each digit with space.\nEnter rows:'
         print(msg)
