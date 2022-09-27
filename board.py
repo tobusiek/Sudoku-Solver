@@ -5,16 +5,21 @@ class Cell:
         self.digit = digit
         self._possible = set()
 
+    @property
+    def possible(self) -> set[int]:
+        """Returns possible digits for the cell."""
+        return self._possible
+
     def add_possible_digit(self, possible: int) -> None:
-        """TODO"""
+        """Adds passed digit to possible digits for the cell."""
         self._possible.add(possible)
 
     def set_possible_digits(self, possible: set[int]) -> None:
-        """TODO"""
+        """Sets possible digits for the cell from passed set."""
         self._possible = possible
 
     def remove_from_possible(self, not_possible: int) -> None:
-        """TODO"""
+        """Removes passed digit from possible for the cell."""
         self._possible.remove(not_possible)
 
     def __str__(self) -> str:
@@ -22,23 +27,46 @@ class Cell:
 
 
 class Board:
-    """Class for sudoku board with 81 cells."""
+    """Class for 9x9 sudoku board."""
 
     def __init__(self, cells: list[list[Cell]]) -> None:
         self._board = cells
 
     @property
     def current_board(self) -> list[list[Cell]]:
-        """TODO"""
+        """Returns current board."""
         return self._board
 
+    def get_cell(self, row: int, col: int) -> Cell:
+        """Returns cell from board on passed row and column."""
+        return self._board[row][col]
+
     def transpose(self) -> list[list[Cell]]:
-        """TODO"""
+        """Returns transposed board."""
         return list(map(list, zip(*self._board)))
 
-    def __str__(self) -> str:
-        """TODO"""
+    def get_nth_row_digits(self, n: int) -> set[int]:
+        """Returns digits from n-th row."""
+        return {c.digit for c in self.current_board[n] if c.digit != 0}
 
+    def get_nth_col_digits(self, n: int) -> set[int]:
+        """Returns digits from n-th column."""
+        return {c.digit for c in self.transpose()[n] if c.digit != 0}
+
+    def get_box_digits(self, row: int, col: int) -> set[int]:
+        """Returns digits from box in which given indices occur."""
+        start_row = row - row % 3
+        start_col = col - col % 3
+
+        return {
+            self.current_board[i][j].digit
+            for j in range(start_col, start_col + 3)
+            for i in range(start_row, start_row + 3)
+            if self.current_board[i][j].digit != 0
+        }
+
+    def __str__(self) -> str:
+        """Returns string for pretty-printing current board."""
         if not self._board:
             raise ValueError('No board presented')
 
@@ -57,10 +85,10 @@ class Board:
 
 
 class BoardValidator:
-    """TODO"""
+    """Validator for the board - validates digits in rows, columns and boxes."""
 
     def _valid_rows_digits(self, board: Board) -> bool:
-        """TODO"""
+        """Validates digits in all rows."""
         for i in range(9):
             row_digits = [c.digit for c in board.current_board[i] if c.digit != 0]
             if len(row_digits) != len(set(row_digits)):
@@ -69,7 +97,7 @@ class BoardValidator:
         return True
 
     def _valid_cols_digits(self, board: Board) -> bool:
-        """TODO"""
+        """Validates digits in all columns."""
         boardT = board.transpose()
         for i in range(9):
             col_digits = [c.digit for c in boardT[i] if c.digit != 0]
@@ -78,8 +106,8 @@ class BoardValidator:
                 return False
         return True
 
-    def _valid_squares_digits(self, board: Board) -> bool:
-        """TODO"""
+    def _valid_boxes_digits(self, board: Board) -> bool:
+        """Validates digits in all boxes."""
         boxes = [
             [
                 board.current_board[3 * i + k][3 * j + l].digit
@@ -106,7 +134,7 @@ class BoardValidator:
         if not self._valid_cols_digits(board):
             return False
 
-        if not self._valid_squares_digits(board):
+        if not self._valid_boxes_digits(board):
             return False
 
         return True

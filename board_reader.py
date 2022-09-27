@@ -1,6 +1,8 @@
-from abc import ABC, abstractmethod
 from os import curdir
 from string import digits
+
+from abc import ABC, abstractmethod
+
 from csv_opener import CSVSelector
 from board import Cell
 
@@ -63,7 +65,7 @@ class InputReader(BoardReader):
         return [int(digit) for digit in row]
 
     def read(self) -> list[list[Cell]]:
-        msg = '\nEnter rows of given digits.'
+        msg = '\nEnter rows of given digits. '
         msg += 'If cell doesn\'t have a digit yet, enter 0.'
         msg += ' Separate each digit with space.\nEnter rows:'
         print(msg)
@@ -78,9 +80,6 @@ class InputReader(BoardReader):
             self._set_row(i, row)
 
         return self._parse_board()
-
-    def __str__(self) -> str:
-        return 'console input'
 
 
 class CSVReader(BoardReader):
@@ -118,9 +117,6 @@ class CSVReader(BoardReader):
 
         return self._parse_board()
 
-    def __str__(self) -> str:
-        return 'CSV file'
-
 
 class TestBoardReader(CSVReader):
     """Class for board reading test board."""
@@ -135,6 +131,3 @@ class TestBoardReader(CSVReader):
                 self._set_row(i, row)
 
         return self._parse_board()
-
-    def __str__(self) -> str:
-        return 'test board'
